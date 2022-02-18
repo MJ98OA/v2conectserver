@@ -10,6 +10,7 @@ class PreguntasRepository {
             Preguntas(4,"Cual es el mes que menos dias tiene","Marzo","Febrero","Julio","Diciembre"),
             Preguntas(5,"Cual es la capital de Ecuador","Lima","El cairo","Ambato","Quito"),
             Preguntas(6,"En que año fue la revolucion francesa","1769","1789","1987","1979")
+
         )
 
         var listaRespuestas = mutableListOf(

@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Entity
-data class Usuarios(var nombre: String, var Contraseña: String, var token:String, var preguntas:PreguntasRepository) {
+data class Usuarios(var nombre: String, var Contraseña: String, var token:String, var preguntas: MutableList<Preguntas>) {
 
     @Id
     @GeneratedValue
@@ -15,7 +15,6 @@ data class Usuarios(var nombre: String, var Contraseña: String, var token:Strin
     override fun toString(): String {
         val gson = Gson()
         return gson.toJson(this)
-
     }
 
 }
