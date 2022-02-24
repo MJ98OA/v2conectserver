@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
 @Entity
-data class Usuarios(var nombre: String, var Contraseña: String, var token:String, var preguntas: MutableList<Preguntas>) {
+data class Usuarios(var nombre: String, var Contrasenia: String, var token:String) {
 
     @Id
     @GeneratedValue
@@ -16,5 +16,6 @@ data class Usuarios(var nombre: String, var Contraseña: String, var token:Strin
         val gson = Gson()
         return gson.toJson(this)
     }
+
 
 }

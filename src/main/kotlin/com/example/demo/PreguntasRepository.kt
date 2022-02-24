@@ -14,13 +14,13 @@ class PreguntasRepository {
         )
 
         var listaRespuestas = mutableListOf(
-            Respuestas(0,"A"),
-            Respuestas(1,"C"),
-            Respuestas(2,"C"),
-            Respuestas(3,"D"),
-            Respuestas(4,"B"),
-            Respuestas(5,"D"),
-            Respuestas(6,"B")
+            Respuestas(0,"2020"),
+            Respuestas(1,"365"),
+            Respuestas(2,"Paris"),
+            Respuestas(3,"7"),
+            Respuestas(4,"Febrero"),
+            Respuestas(5,"Quito"),
+            Respuestas(6,"1789")
         )
     }
 }

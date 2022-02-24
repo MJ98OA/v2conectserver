@@ -12,6 +12,13 @@ class PreguntasController(private val usuariosRepository: UsuariosRepository) {
     lateinit var pregunta:Preguntas
     var idPregunta_Respuesta:Int=0
 
+    @GetMapping("todasRespuestas")
+    fun todasRespuestas() : MutableList<Respuestas> {
+
+        return PreguntasRepository.listaRespuestas
+
+    }
+
     @GetMapping("getPreguntaRandom")
     fun getPreguntaRandom() : Preguntas {
         this.idPregunta_Respuesta=Random.nextInt(PreguntasRepository.listaPreguntas.size)
@@ -31,8 +38,9 @@ class PreguntasController(private val usuariosRepository: UsuariosRepository) {
             "Falso"
     }
 
+
     @PostMapping("pokemonBody")
-    fun insertStudent(@RequestBody usuarioSimple: UsuarioSimple ): String {
+    fun insertStudent(@RequestBody usuario: UsuarioSimple): String {
 
         var rString:String=""
         repeat(9){
@@ -42,12 +50,24 @@ class PreguntasController(private val usuariosRepository: UsuariosRepository) {
                 rString+=Random.nextInt(97..122).toChar()
         }
 
-        var usuariocompleto=Usuarios(usuarioSimple.usuario,usuarioSimple.contrasenia,rString,PreguntasRepository.listaPreguntas)
-        usuariosRepository.save(usuariocompleto)
-        usuariosRepository.findAll().forEach { println(it) }
+        var usuariocompleto=Usuarios(usuario.nombre,usuario.contrasenia,rString)
 
-        return rString
+
+        var comprobacion:Boolean=true
+
+        usuariosRepository.findAll().forEach {
+            if(it.nombre==usuario.nombre && it.Contrasenia==usuario.contrasenia)
+                comprobacion=false
+        }
+
+        if(comprobacion) usuariosRepository.save(usuariocompleto)
+
+
+
+        return if(comprobacion){ usuariocompleto.token }else "Usuario repetido"
+
 
     }
+
 
 }
