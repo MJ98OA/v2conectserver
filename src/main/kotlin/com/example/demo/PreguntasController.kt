@@ -6,68 +6,115 @@ import kotlin.random.nextInt
 
 @RestController
 class PreguntasController(private val usuariosRepository: UsuariosRepository) {
-
-
-
-    lateinit var pregunta:Preguntas
-    var idPregunta_Respuesta:Int=0
+    var token = ""
+    lateinit var pregunta: Preguntas
+    var aleatorioListaPreg_Res: Int = 0
 
     @GetMapping("todasRespuestas")
-    fun todasRespuestas() : MutableList<Respuestas> {
+    fun todasRespuestas(): MutableList<Respuestas> {
 
         return PreguntasRepository.listaRespuestas
 
     }
 
-    @GetMapping("getPreguntaRandom")
-    fun getPreguntaRandom() : Preguntas {
-        this.idPregunta_Respuesta=Random.nextInt(PreguntasRepository.listaPreguntas.size)
+    @GetMapping("getPreguntaRandom/{token}")
+    fun getPreguntaRandom(@PathVariable token: String):Preguntas{
 
-        pregunta=PreguntasRepository.listaPreguntas.get(idPregunta_Respuesta)
+
+        var usuario=obtenerUsuario(token)
+        usuario?.let {
+            if(usuario.listaIdpreguntas.size!=PreguntasRepository.listaPreguntas.size){
+
+                aleatorioListaPreg_Res = Random.nextInt(PreguntasRepository.listaPreguntas.size)
+
+                while(usuario.listaIdpreguntas.contains(aleatorioListaPreg_Res))
+                    aleatorioListaPreg_Res = Random.nextInt(PreguntasRepository.listaPreguntas.size)
+
+                pregunta = PreguntasRepository.listaPreguntas.get(aleatorioListaPreg_Res)
+
+                usuario.listaIdpreguntas.add(aleatorioListaPreg_Res)
+                usuariosRepository.save(usuario)
+            }else
+                pregunta= Preguntas(10,"final","final","final","final","final")
+        }
+
+        usuariosRepository.findAll().forEach { "lista usuarios"+println(it.toString()) }
+
+        System.out.println(pregunta.toString())
+
 
         return pregunta
 
     }
 
-    @GetMapping("getPreguntaRandom/{id}")
-    fun getPokemonFavorito(@PathVariable id: String) : String {
-        return if (PreguntasRepository.listaRespuestas.get(idPregunta_Respuesta).Solucion == id){
+    /*@GetMapping("getPreguntaRandom/{id}")
+    fun getPokemonFavorito(@PathVariable id: String): String {
+
+        return if (PreguntasRepository.listaRespuestas.get(idPregunta_Respuesta).Solucion == id) {
             "Cierto"
-        }
-        else
+        } else
             "Falso"
+    }*/
+
+
+    @PostMapping("creacionUsuario")
+    fun insertUser(@RequestBody usuario: Usuarios.UsuarioSimple): String {
+        var devolvertoken = ""
+        var agregarUsuario = true
+
+        if (usuariosRepository.count() <= 0)
+            guardarUsuario(usuario.nombre, usuario.contrasenia)
+
+            usuariosRepository.findAll().forEach {
+                //println(it.toString()+"a")
+                if (it.nombre == usuario.nombre && it.contrasenia == usuario.contrasenia) {
+                    agregarUsuario = false
+                    devolvertoken = it.token
+
+                }
+            }
+        if (agregarUsuario) {
+            var usuarionuevo = guardarUsuario(usuario.nombre, usuario.contrasenia)
+            devolvertoken = usuarionuevo.token
+        }
+        return devolvertoken
     }
 
+    @PostMapping("preguntasUsuario")
+    fun preguntasUsuario(@PathVariable token: String) {
+        var usuario=obtenerUsuario(token)
 
-    @PostMapping("pokemonBody")
-    fun insertStudent(@RequestBody usuario: UsuarioSimple): String {
 
-        var rString:String=""
-        repeat(9){
-            if(Random.nextBoolean())
-                rString+=Random.nextInt(65..90).toChar()
+    }
+
+    //Funciones//
+
+    fun obtenertoken(): String {
+        var rString = ""
+        //println("he llegado")
+        repeat(9) {
+            if (Random.nextBoolean())
+                rString += Random.nextInt(65..90).toChar()
             else
-                rString+=Random.nextInt(97..122).toChar()
+                rString += Random.nextInt(97..122).toChar()
         }
-
-        var usuariocompleto=Usuarios(usuario.nombre,usuario.contrasenia,rString)
-
-
-        var comprobacion:Boolean=true
-
-        usuariosRepository.findAll().forEach {
-            if(it.nombre==usuario.nombre && it.Contrasenia==usuario.contrasenia)
-                comprobacion=false
-        }
-
-        if(comprobacion) usuariosRepository.save(usuariocompleto)
-
-
-
-        return if(comprobacion){ usuariocompleto.token }else "Usuario repetido"
-
-
+        return rString
     }
 
+    fun guardarUsuario(nombreUser: String, contraseniaUser: String): Usuarios {
+        var usuarioGuardado = usuariosRepository.save(Usuarios(nombreUser, contraseniaUser, obtenertoken()))
+        return usuarioGuardado
+    }
 
+    fun obtenerUsuario(token:String): Usuarios? {
+        var usuarioDevuelto: Usuarios? =null
+        usuariosRepository.findAll().forEach {
+            if(token==it.token)
+                usuarioDevuelto=it
+        }
+        return usuarioDevuelto
+    }
 }
+
+
+
