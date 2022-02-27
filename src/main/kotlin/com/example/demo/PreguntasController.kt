@@ -33,6 +33,7 @@ class PreguntasController(private val usuariosRepository: UsuariosRepository) {
                 pregunta = PreguntasRepository.listaPreguntas.get(aleatorioListaPreg_Res)
 
                 usuario.listaIdpreguntas.add(aleatorioListaPreg_Res)
+
                 usuariosRepository.save(usuario)
             }else
                 pregunta= Preguntas(10,"final","final","final","final","final")
@@ -70,7 +71,6 @@ class PreguntasController(private val usuariosRepository: UsuariosRepository) {
                 if (it.nombre == usuario.nombre && it.contrasenia == usuario.contrasenia) {
                     agregarUsuario = false
                     devolvertoken = it.token
-
                 }
             }
         if (agregarUsuario) {
@@ -83,8 +83,6 @@ class PreguntasController(private val usuariosRepository: UsuariosRepository) {
     @PostMapping("preguntasUsuario")
     fun preguntasUsuario(@PathVariable token: String) {
         var usuario=obtenerUsuario(token)
-
-
     }
 
     //Funciones//
